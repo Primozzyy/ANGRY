@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A Message for Uleinah</title>
+  <style>
+    /* =========================================
+       1. GLOBAL STYLES & FONTS
+    ========================================= */
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Indie+Flower&family=Poppins:wght@300;600;800&display=swap');
+
+    * { box-sizing: border-box; }
+    
+    body, html {
+      margin: 0; padding: 0;
+      height: 100vh; width: 100vw;
+      background-color: #fdf4f9; 
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden; 
+    }
+
+    /* =========================================
+       2. PAGE NAVIGATION (Transitions)
+    ========================================= */
+    .page {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.8s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    #page1 { z-index: 10; padding: 20px; }
+    #page1.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+
+    #page2 {
+      z-index: 5;
+      background: #fff0f5;
+      transform: translateY(100%);
+      opacity: 0;
+      overflow-y: auto; 
+      padding: 20px;
+      display: block; 
+    }
+    #page2.active { transform: translateY(0); opacity: 1; }
+
+    /* =========================================
+       3. HEADER & TEXT STYLES
+    ========================================= */
+    .header-container {
+      text-align: center;
+      width: 100%;
+      position: absolute;
+      top: 40px; 
+    }
+    .header-container h1 { 
+      font-family: 'Indie Flower', cursive; 
+      color: #c81e56; margin: 0; font-size: 2rem; font-weight: 1000; 
+      -webkit-text-stroke: 2px #e92f76; 
+      text-shadow: 4px 4px 8px rgba(0,0,0,0.2); 
+    }
+    .header-container p { 
+      font-style: italic; color: #e92f67; font-size: 1rem; margin: 0; font-weight: 600; -webkit-text-stroke: 1.5px #e92f67; 
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* =========================================
+       4. ENVELOPE & CARD ANIMATION
+    ========================================= */
+    .interactive-area {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 60px; 
+    }
+    .container { 
+      position: relative; width: 320px; height: 220px; perspective: 1500px; z-index: 10; margin-bottom: 20px;
+    }
+    .envelope-back { position: absolute; width: 100%; height: 100%; background: #f8bbd0; border-radius: 20px; border: 2px solid #e191b0; z-index: 1; }
+    .envelope-front { position: absolute; width: 100%; height: 100%; background: #f8bbd0; clip-path: polygon(0 35%, 50% 65%, 100% 35%, 100% 100%, 0 100%); z-index: 3; border-radius: 20px; border: 2px solid #e191b0; }
+    .flap { position: absolute; width: 100%; height: 100%; background: #f6a9c6; clip-path: polygon(0 0, 100% 0, 100% 35%, 50% 65%, 0 35%); transform-origin: top; transition: transform 0.9s ease-in-out; z-index: 4; border-radius: 20px 20px 0 0;
+    border: 2px solid #e191b0; border-bottom: 2px solid #e191b0;}
+    .flap.open { transform: rotateX(170deg); z-index: 0; }
+
+    .card {
+      position: absolute; top: 10px; left: 10px; width: 300px; height: 200px; background: whitesmoke; border: 2px solid #c81e56; border-radius: 15px; padding: 20px; z-index: 2; transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.1); color: #c81e56; overflow-y: auto; font-family: 'Dancing Script', cursive; font-size: 1.25rem; line-height: 1.4; scrollbar-width: none;
+    }
+    .card.revealed { transform: translateY(-170px) rotate(725deg); }
+
+    /* =========================================
+       5. BUTTONS & UI
+    ========================================= */
+    .button-group { display: flex; flex-direction: column; gap: 12px; align-items: center; z-index: 10; margin-top: 20px; }
+    .toggle-button, .bottom-button {
+      padding: 12px 30px; background: #c81e56; color: antiquewhite; border: 2px solid ghostwhite; border-radius: 30px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 0.9rem; text-transform: uppercase;
+    }
+    .back-btn { padding: 8px 15px; background: #c81e56; color: white; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; }
+
+    /* =========================================
+       6. VIDEO GALLERY GRID (20 VIDEOS)
+    ========================================= */
+    .gallery-header { text-align: center; margin-bottom: 20px; padding-top: 20px; }
+    .gallery-header h2 { font-family: 'Indie Flower', cursive; color: #c81e56; font-weight: 800; }
+    
+    .video-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+      gap: 20px; 
+      max-width: 1100px; 
+      margin: 0 auto; 
+      padding-bottom: 100px; 
+    }
+    .video-card { background: white; border-radius: 15px; overflow: hidden; border: 2px solid #f8bbd0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    video { width: 100%; display: block; background: #000; }
+    .video-info { padding: 10px; text-align: center; font-size: 0.9rem; color: #a01644; font-weight: bold; text-transform: uppercase; }
+
+    /* =========================================
+       7. HEART DECORATIONS
+    ========================================= */
+    .heart-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.4;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="%23c81e56"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+      background-size: 50px 50px; animation: heartMove 50s linear infinite;
+    }
+    @keyframes heartMove { from { background-position: 0 0; } to { background-position: 700px 700px; } }
+    .heart-button { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; z-index: 5; cursor: pointer; }
+    .heart-shape { position: relative; width: 30px; height: 30px; background: #dd3669; transform: rotate(45deg); margin: 15px; }
+    .heart-shape::before, .heart-shape::after { content: ''; position: absolute; width: 30px; height: 30px; background: #dd3669; border-radius: 50%; }
+    .heart-shape::before { left: -15px; } .heart-shape::after { top: -15px; }
+    .floating-heart { position: absolute; font-size: 24px; pointer-events: none; z-index: 100; animation: burst 1.5s ease-out forwards; }
+    @keyframes burst { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(1.5); opacity: 0; } }
+  </style>
+</head>
+<body>
+
+  <div class="page" id="page1">
+    <div class="heart-bg"></div>
+    <div class="header-container">
+      <h1>MESSAGE FOR YOU, ULEINAH !!</h1>
+      <p>CONGRATULATIONS, BABY!</p>
+    </div>
+
+    <div class="interactive-area">
+      <div class="container">
+        <div class="flap" id="flap"></div>
+        <div class="envelope-front"></div>
+        <div class="card" id="card">
+            <strong id="typewriter-title">Dear Uleinah,</strong><br>
+            <span id="typewriter-text"></span>
+        </div>
+        <div class="heart-button" id="heartBtn"><div class="heart-shape"></div></div>
+        <div class="envelope-back"></div>
+      </div>
+      
+      <div class="button-group">
+        <button class="toggle-button" id="toggleBtn">OPEN / CLOSE</button>
+        <button class="bottom-button" id="goToVideos">WATCH VIDEOS</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page2">
+    <div class="gallery-header">
+      <button class="back-btn" id="goBack">← Back</button>
+      <h2>Our Moments ✨</h2>
+    </div>
+
+    <div class="video-grid">
+      <div class="video-card"><video controls preload="none"><source src="1.mp4" type="video/mp4"></video><div class="video-info">VIDEO 1</div></div>
+      <div class="video-card"><video controls preload="none"><source src="2.mp4" type="video/mp4"></video><div class="video-info">VIDEO 2</div></div>
+      <div class="video-card"><video controls preload="none"><source src="3.mp4" type="video/mp4"></video><div class="video-info">VIDEO 3</div></div>
+      <div class="video-card"><video controls preload="none"><source src="4.mp4" type="video/mp4"></video><div class="video-info">VIDEO 4</div></div>
+      <div class="video-card"><video controls preload="none"><source src="5.mp4" type="video/mp4"></video><div class="video-info">VIDEO 5</div></div>
+      <div class="video-card"><video controls preload="none"><source src="6.mp4" type="video/mp4"></video><div class="video-info">VIDEO 6</div></div>
+      <div class="video-card"><video controls preload="none"><source src="7.mp4" type="video/mp4"></video><div class="video-info">VIDEO 7</div></div>
+      <div class="video-card"><video controls preload="none"><source src="8.mp4" type="video/mp4"></video><div class="video-info">VIDEO 8</div></div>
+      <div class="video-card"><video controls preload="none"><source src="9.mp4" type="video/mp4"></video><div class="video-info">VIDEO 9</div></div>
+      <div class="video-card"><video controls preload="none"><source src="10.mp4" type="video/mp4"></video><div class="video-info">VIDEO 10</div></div>
+      <div class="video-card"><video controls preload="none"><source src="11.mp4" type="video/mp4"></video><div class="video-info">VIDEO 11</div></div>
+      <div class="video-card"><video controls preload="none"><source src="12.mp4" type="video/mp4"></video><div class="video-info">VIDEO 12</div></div>
+      <div class="video-card"><video controls preload="none"><source src="13.mp4" type="video/mp4"></video><div class="video-info">VIDEO 13</div></div>
+      <div class="video-card"><video controls preload="none"><source src="14.mp4" type="video/mp4"></video><div class="video-info">VIDEO 14</div></div>
+      <div class="video-card"><video controls preload="none"><source src="15.mp4" type="video/mp4"></video><div class="video-info">VIDEO 15</div></div>
+      <div class="video-card"><video controls preload="none"><source src="16.mp4" type="video/mp4"></video><div class="video-info">VIDEO 16</div></div>
+      <div class="video-card"><video controls preload="none"><source src="17.mp4" type="video/mp4"></video><div class="video-info">VIDEO 17</div></div>
+      <div class="video-card"><video controls preload="none"><source src="18.mp4" type="video/mp4"></video><div class="video-info">VIDEO 18</div></div>
+      <div class="video-card"><video controls preload="none"><source src="19.mp4" type="video/mp4"></video><div class="video-info">VIDEO 19</div></div>
+      <div class="video-card"><video controls preload="none"><source src="20.mp4" type="video/mp4"></video><div class="video-info">VIDEO 20</div></div>
+    </div>
+  </div>
+
+  <script>
+  const page1 = document.getElementById('page1');
+  const page2 = document.getElementById('page2');
+  const goToVideos = document.getElementById('goToVideos');
+  const goBack = document.getElementById('goBack');
+  const heartBtn = document.getElementById('heartBtn');
+  const toggleBtn = document.getElementById('toggleBtn');
+  const flap = document.getElementById('flap');
+  const card = document.getElementById('card');
+  const textContainer = document.getElementById('typewriter-text');
+
+  const fullMessage = "Hi Uleinah, I’ve been thinking about how everything started between us, and it’s honestly crazy how one simple conversation on February 5, 2026 slowly turned into something this important to me. At first, it was just messages, small talks, and getting to know each other little by little, but even back then, I already felt that talking to you was different from talking to anyone else. You weren’t just someone I chatted with out of boredom—you became someone I looked forward to every day. I remember checking my phone more often, hoping to see your name pop up, because even our simple conversations felt special and made my day better without you even realizing it. Then came March 23, 2026, the day I officially started courting you. That day wasn’t just a date on the calendar for me—it was the moment I decided that you were someone worth my effort, my time, and my sincerity. I didn’t want to treat you like a temporary person in my life; I wanted you to know that I was serious about getting to know you more, respecting you, and proving to you that my intentions were real. From that day on, everything felt more meaningful, every message, every good morning and good night, every joke, every little update about our day—it all felt like part of something we were building together. You, Uleinah Zoe Canlas, are not just any girl to me. You’re someone with your own unique personality, habits, and little things that make you who you are. I know you’re only 17, the youngest among your siblings, and sometimes that means you’re the one who gets teased the most or the one people still see as the baby of the family, but to me, you’re someone I respect and admire, especially because you help serve in church. Not everyone at our age chooses to stay close to their faith and give their time to something meaningful like that, and it honestly shows how kind and sincere your heart is. Being Catholic and actively serving in church says a lot about your character—it shows you’re someone who values goodness, discipline, and helping others, and that’s one of the things I genuinely admire about you. I also love how you have creative hobbies like baking and painting. There’s something really beautiful about someone who can create things with their hands, whether it’s something sweet from the oven or something colorful on a canvas. When you bake, you’re not just making food—you’re making something that can make people smile and feel comforted. And when you paint, you’re expressing your thoughts and emotions in a way that words sometimes can’t. Those hobbies show that you’re not just caring, but also artistic and expressive, and I think that’s something really rare and special. You’ve told me before that your favorite color is lavender or purple, and honestly, that color suits you. It’s soft, calm, and gentle, but also unique and elegant—just like your personality. And your favorite flowers being daisies makes sense too, because daisies are simple but beautiful in a natural way. They’re not overly fancy, but they still stand out because of their purity and brightness. It reminds me of how you don’t need to try too hard to be noticed—you’re already special just by being yourself. I even remember how you told me your favorite movie is The Bridge to Terabithia, and that you like mystery and thriller genres. That says a lot about how deep your emotions can be, because that movie isn’t just a simple happy story—it’s something that touches the heart and makes you think about friendship, imagination, and loss. It shows that you’re someone who feels things deeply, someone who can connect to stories and emotions, not just someone who watches movies for fun without thinking about their meaning. There are also small details about you that I keep in my mind, like how you prefer drinking Coke, or how you avoid pork because it makes you dizzy, and how you don’t like seeing blood because it makes you feel weak. These might seem like small or random facts, but to me, they matter because they are part of what makes you comfortable and safe. I want to be someone who remembers those things—not just the big, obvious details, but also the quiet and personal ones—because that’s how you show someone they are important to you. I know you also have sensitive skin and that every summer you tend to get wounds on your feet, and those things remind me that you’re someone who needs to be taken care of gently, someone who deserves patience and understanding. And even the way your mood can change quickly sometimes, or how you can get mapikon easily, I don’t see that as something negative. I see it as part of your personality, something that shows how expressive and honest you are with your feelings. You don’t hide what you feel, and even if it can be challenging sometimes, it’s also what makes you real and genuine. As I continue writing this message, I want you to understand one thing clearly: everything I’m saying here is not just to sound sweet or romantic. I’m saying it because these are the things I truly notice about you, the things I remember without forcing myself to, the details that stay in my mind because you matter to me more than you probably realize. And this is only the beginning of what I want to tell you, because there’s still so much more I feel and want to express about how you’ve slowly become someone very important in my life. Every day with you feels like a new chapter in a story I never want to end. I love how even the simplest conversations with you can brighten my day, whether it’s just a “good morning” text or when we’re talking about random things that don’t even make sense to anyone else but us. Those little talks aren’t just passing time—they’re moments where I feel closer to you, where I learn more about your personality, your likes, dislikes, and the way you see the world. I notice how your thoughts flow, how passionate you get about things you love, like baking a new recipe or finishing a painting, and even the way your moods change so quickly—it all tells me that you’re someone full of life and energy, someone whose heart reacts strongly to the world, and that’s something I admire deeply. I know sometimes your moods shift quickly, and it can be confusing or challenging, especially when you get mapikon or feel irritated for no clear reason. But I don’t see that as a problem. Honestly, it’s part of who you are, and it’s part of why I love being with you. Those moments remind me to be patient, to listen, and to be careful with my words. I’ve learned to pay attention to the little signals—the tone in your voice, the pauses in your messages, or even the way you smile when you’re trying not to be upset—and understanding those subtle cues has made me feel more connected to you than I ever expected. I love that you’re genuine enough to show your emotions honestly, without pretending everything is okay when it’s not. That kind of honesty and authenticity is rare, and it makes me want to be someone who matches it with the same level of care and attention. I also think about how your sensitivities—like your skin, your aversion to pork, or even seeing blood—are parts of you that require care, and I want you to know that I notice and respect them. They aren’t weaknesses; they’re just aspects of your life that make you human, and they’re things I want to be aware of so that I can protect you, make you feel safe, and show that I genuinely care about your comfort. Every small detail—like how you get wounds on your feet every summer, or how certain things make you dizzy—is something I remember because it matters to me. Your well-being matters to me. I want to be someone who makes life easier for you, who notices when you need a little extra support, and who makes sure you’re taken care of physically, emotionally, and mentally. Even your hobbies fascinate me. The way you put love into baking and creativity into painting isn’t just a skill—it’s an extension of your heart. I imagine you in your own little world, mixing ingredients carefully or holding a brush with focused concentration, and it’s beautiful to me because it’s uniquely you. And the way you bring joy to others with your creations, even if it’s just a small treat or a painting you made for fun, reminds me that your kindness isn’t limited to words—it extends into everything you do. Then there’s your playful side, which I absolutely adore. I love when you joke, tease, or act silly with me. Those moments show me that you feel comfortable and happy, and they’re reminders that I can laugh with you, enjoy life with you, and share a world that’s just ours. Even when you’re serious or sensitive, those playful moments balance everything out and make me appreciate the full range of who you are. I think about your favorite things too, like your love for lavender and purple, your preference for daisies, or even your favorite drink, Coke— all those little details are pieces of you that I treasure. I imagine surprising you with these things someday, bringing you flowers you like, or just having a cozy moment where we drink something you enjoy and talk about anything and everything. It’s these small things that make me realize how much I care about every part of your life, and how I want to be someone who not only loves you but notices the things that make you happiest. Your sensitivity isn’t just about physical things—it’s also emotional. I’ve noticed how movies like The Bridge to Terabithia or mystery-thriller stories capture your attention because you connect with emotions and the intensity of life in ways that run deep. I love that about you, because it shows me that your mind and heart are tuned to experiences that matter, not just superficial entertainment. I want to be someone who can match that, someone who makes you feel understood and appreciated even when the world feels overwhelming or confusing. I also know that your moods can sometimes make you feel frustrated or impatient with the world, and it’s okay. I see those moments not as something to fix, but as signals that you’re human, that your feelings are valid, and that your reactions are real. I’ve learned that being with you means learning to be patient, to listen more, and to be someone who makes space for you to feel what you feel without judgment. It’s part of loving you, and honestly, it’s a privilege because it teaches me how to be better—not just for you, but for myself too. Uleinah, I know sometimes you feel insecure about your physical appearance, and I want you to hear this clearly: to me, you are beautiful in every way, exactly as you are. Every detail that you notice about yourself, even the ones you don’t like, are what make you uniquely you, and that’s what I love most. Your smile, the way your eyes light up when you’re excited, your hands when you bake or paint, your laugh, your expressions, and even the little quirks you think are flaws—they all make you perfect in my eyes. You don’t need to change anything to be amazing because the person you are inside shines brighter than anything else, and that light makes you stunning to everyone who really sees you. I want you to stop comparing yourself to anyone else or imagining what you “should” look like, because your worth is not measured by standards or opinions. It’s measured by the kindness you give, the love you share, the creativity you express, and the way you make people feel—especially me. Every time you doubt yourself, I see someone strong, caring, and beautiful, someone who deserves to feel confident and proud of the amazing person she is. Your body, your face, your skin, your hair, every little thing about you is part of the magic that makes you who you are, and no one could ever replace that. I love you exactly as you are, and I will always remind you of that, even on days when you don’t feel like yourself. You are worthy of love, joy, and pride, not just for how you look, but for the heart and soul you carry. The world is brighter because of you, and I hope you start seeing yourself through my eyes—the way I see someone truly beautiful, inside and out, whose presence alone can make life sweeter. So whenever insecurity creeps in, remember that I adore every part of you, that you are enough, and that your beauty isn’t just in what you see in the mirror—it’s in every laugh, every thought, every gesture, and every moment you share your heart. You are perfect, Uleinah, and I will never stop loving you for everything that makes you uniquely and wonderfully you. I know tomorrow is a big day—your graduation—and I want you to remember that this milestone isn’t just about finishing school; it’s about how far you’ve come, how much you’ve grown, and how much you’ve overcome. I know lately you’ve felt like your spark in academics is fading, like the energy you used to have to study and push forward is slowly slipping away, and that sometimes you want to give up or feel tired of trying, but I want to remind you of something very important: the effort you’ve put in, no matter how small it feels, matters more than perfection. Academics aren’t just about grades or scores; they’re about showing yourself what you’re capable of, testing your limits, and proving to yourself that even when things feel hard, you can rise above them. You’ve faced challenges before, and you’ve made it through every single one, so this is no different. Even if it feels hard right now, even if your confidence wavers, I see your potential, I see your heart, and I know you’re capable of more than you realize. You don’t have to be perfect to succeed—you just have to keep moving forward, one step at a time, just like you always have. I want to be someone who reminds you of your own strength when you forget it, someone who cheers for every accomplishment, no matter how small, and someone who helps you feel proud of yourself because you deserve to feel that way. I also love how even when your mood changes quickly or you feel down, you still try your best, and that effort alone is inspiring. You have so many talents, from baking and painting to caring for your faith and helping others in church. These aren’t things that can be measured by numbers or scores—they’re what make you truly special, and I hope you never forget that. Remember why you started in the first place—those moments when learning made you curious, when solving a problem gave you a sense of pride, and when achieving something small made your heart feel full. That spark is still there, Uleinah, even if it feels dim right now. You just need to reach for it again. I want you to imagine yourself a little into the future, looking back at this moment—you’ll be proud of yourself for not giving up, for pushing through the tiredness, the distractions, and the doubts, and for finishing strong. Every effort you make, even the smallest one, adds up to something bigger than you realize. You’ve already overcome so much in your life, balancing school, hobbies, your faith, and everything else, and that shows me how strong you truly are. Tomorrow, as you walk across that stage, know that you’re not just celebrating academics—you’re celebrating you, all the moments you didn’t give up on, all the hard work, the laughter, the tears, and the growth you’ve experienced. Think about how good it will feel to feel that spark again, to study with focus and confidence, and to know that every moment you invest in your growth is a step toward the life you want to build for yourself. Don’t let this moment pass without trying, because your potential is limitless, and I don’t want you to ever doubt that. You’re capable, you’re brilliant, and you can get that spark back—you just need to believe in yourself like I believe in you. Take it one day at a time, one subject at a time, and don’t forget that even small steps matter. I promise that if you give yourself the chance to refocus and push forward, you’ll feel proud, motivated, and alive in a way that only comes from realizing just how strong and capable you are. I’ll be here to remind you, to cheer you on, and to support you every step of the way. You’ve got this, and I’ll be right here, proud of you, cheering for you, and reminding you that your spark is still alive and will never fade because it’s part of who you are. Uleinah, your spark in academics is still inside you—it’s waiting for you to embrace it, and I know you can. I believe in you completely.";
+  
+  let isOpen = false;
+  let charIndex = 0; 
+  let typingTimer = null;
+  const speed = 100; 
+
+  function startTyping() {
+    if (typingTimer) return; 
+    typingTimer = setInterval(() => {
+      if (charIndex < fullMessage.length) {
+        textContainer.innerHTML += fullMessage.charAt(charIndex);
+        charIndex++;
+        card.scrollTop = card.scrollHeight;
+      } else { stopTyping(); }
+    }, speed);
+  }
+
+  function stopTyping() {
+    clearInterval(typingTimer);
+    typingTimer = null;
+  }
+
+  function openEnvelope() {
+    flap.classList.add('open');
+    heartBtn.style.opacity = '0';
+    heartBtn.style.pointerEvents = 'none';
+    setTimeout(() => {
+      card.classList.add('revealed');
+      setTimeout(startTyping, 1000); 
+    }, 600);
+    isOpen = true;
+  }
+
+  function closeEnvelope() {
+    stopTyping();
+    card.classList.remove('revealed');
+    setTimeout(() => {
+      flap.classList.remove('open');
+      heartBtn.style.opacity = '1';
+      heartBtn.style.pointerEvents = 'auto';
+    }, 600);
+    isOpen = false;
+  }
+
+  function createHearts() {
+    for (let i = 0; i < 12; i++) {
+      setTimeout(() => {
+        const h = document.createElement('div');
+        h.className = 'floating-heart'; h.innerHTML = '💗 ✨❤️💕💝 '; h.style.left = '50%'; h.style.top = '50%';
+        const tx = (Math.random() - 0.5) * 400 + 'px';
+        const ty = (Math.random() * -400 - 50) + 'px'; 
+        const tr = (Math.random() * 720 - 360) + 'deg';
+        h.style.setProperty('--tx', tx); h.style.setProperty('--ty', ty); h.style.setProperty('--tr', tr);
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 1500);
+      }, i * 60); 
+    }
+  }
+
+  heartBtn.addEventListener('click', () => { openEnvelope(); createHearts(); });
+  toggleBtn.addEventListener('click', () => { isOpen ? closeEnvelope() : (openEnvelope(), createHearts()); });
+
+  goToVideos.addEventListener('click', () => {
+    stopTyping();
+    page1.classList.add('hidden');
+    page2.classList.add('active');
+  });
+
+  goBack.addEventListener('click', () => {
+    page1.classList.remove('hidden');
+    page2.classList.remove('active');
+    const videos = document.querySelectorAll('video');
+    videos.forEach(v => v.pause()); 
+    if (isOpen) setTimeout(startTyping, 800); 
+  });
+</script>
+
+</body>
+</html>
