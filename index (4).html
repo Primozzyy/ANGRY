@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A Message for Uleinah</title>
+  <style>
+    /* =========================================
+       1. GLOBAL STYLES & FONTS
+    ========================================= */
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Indie+Flower&family=Poppins:wght@300;600;800&display=swap');
+
+    * { box-sizing: border-box; }
+    
+    body, html {
+      margin: 0; padding: 0;
+      height: 100vh; width: 100vw;
+      background-color: #fdf4f9; 
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden; /* Keeps the page from scrolling weirdly */
+    }
+
+    /* =========================================
+       2. PAGE NAVIGATION (Transitions)
+    ========================================= */
+    .page {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.8s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; 
+    }
+
+    /* Page 1 is the Envelope */
+    #page1 { z-index: 10; padding: 20px; }
+    #page1.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+
+    /* Page 2 is the Video Gallery */
+    #page2 {
+      z-index: 5;
+      background: #fff0f5;
+      transform: translateY(100%);
+      opacity: 0;
+      overflow-y: auto; /* Allows scrolling if videos overflow */
+      padding: 20px;
+      display: block; 
+    }
+    #page2.active { transform: translateY(0); opacity: 1; }
+
+    /* =========================================
+       3. HEADER & TEXT STYLES
+    ========================================= */
+    .header-container {
+      text-align: center;
+      width: 100%;
+      position: absolute;
+      top: 40px; 
+    }
+    .header-container h1 { 
+      font-family: 'Indie Flower', cursive; 
+      color: #c81e56; margin: 0; font-size: 2rem; font-weight: 1000; 
+      -webkit-text-stroke: 2px #e92f76; 
+  text-shadow: 4px 4px 8px rgba(0,0,0,0.2); 
+    }
+    .header-container p { 
+      font-style: italic; color: #e92f67; font-size: 1rem; margin:  0; font-weight: 600; -webkit-text-stroke: 1.5px #e92f67; 
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    /* =========================================
+       4. ENVELOPE & CARD ANIMATION
+    ========================================= */
+    .interactive-area {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 60px; 
+    }
+    .container { 
+      position: relative; width: 320px; height: 220px; perspective: 1500px; z-index: 10; margin-bottom: 20px;
+    }
+    .envelope-back { position: absolute; width: 100%; height: 100%; background: #f8bbd0; border-radius: 20px; border: 2px solid #e191b0; z-index: 1; }
+    .envelope-front { position: absolute; width: 100%; height: 100%; background: #f8bbd0; clip-path: polygon(0 35%, 50% 65%, 100% 35%, 100% 100%, 0 100%); z-index: 3; border-radius: 20px; border: 2px solid #e191b0; }
+    .flap { position: absolute; width: 100%; height: 100%; background: #f6a9c6; clip-path: polygon(0 0, 100% 0, 100% 35%, 50% 65%, 0 35%); transform-origin: top; transition: transform 0.9s ease-in-out; z-index: 4; border-radius: 20px 20px 0 0;
+    border: 2px solid #e191b0; border-bottom: 2px solid #e191b0;}
+    .flap.open { transform: rotateX(170deg); z-index: 0; }
+
+    .card {
+      position: absolute; top: 10px; left: 10px; width: 300px; height: 200px; background: whitesmoke; border: 2px solid #c81e56; border-radius: 15px; padding: 20px; z-index: 2; transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.1); color: #c81e56; overflow-y: auto; font-family: 'Dancing Script', cursive; font-size: 1.25rem; line-height: 1.4; scrollbar-width: none;
+    }
+    .card.revealed { transform: translateY(-170px) rotate(725deg); }
+
+    /* =========================================
+       5. BUTTONS & UI
+    ========================================= */
+    .button-group { display: flex; flex-direction: column; gap: 12px; align-items: center; z-index: 10; margin-top: 20px; }
+    .toggle-button, .bottom-button {
+      padding: 12px 30px; background: #c81e56; color: antiquewhite; border: 2px solid ghostwhite; border-radius: 30px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 0.9rem; text-transform: uppercase;
+    }
+    .back-btn { padding: 8px 15px; background: #c81e56; color: white; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; }
+
+    /* =========================================
+       6. VIDEO GALLERY GRID (Max 5)
+    ========================================= */
+    .gallery-header { text-align: center; margin-bottom: 20px; padding-top: 20px; }
+    .gallery-header h2 { font-family: 'Indie Flower', cursive; color: #c81e56; font-weight: 800; }
+    
+    .video-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+      gap: 20px; 
+      max-width: 1100px; 
+      margin: 0 auto; 
+      padding-bottom: 100px; 
+    }
+    .video-card { background: white; border-radius: 15px; overflow: hidden; border: 2px solid #f8bbd0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    video { width: 100%; display: block; background: #000; }
+    .video-info { padding: 10px; text-align: center; font-size: 0.9rem; color: #a01644; font-weight: bold; }
+
+    /* =========================================
+       7. HEART DECORATIONS
+    ========================================= */
+    .heart-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.4;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="%23c81e56"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+      background-size: 50px 50px; animation: heartMove 50s linear infinite;
+    }
+    @keyframes heartMove { from { background-position: 0 0; } to { background-position: 700px 700px; } }
+    .heart-button { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; z-index: 5; cursor: pointer; }
+    .heart-shape { position: relative; width: 30px; height: 30px; background: #dd3669; transform: rotate(45deg); margin: 15px; }
+    .heart-shape::before, .heart-shape::after { content: ''; position: absolute; width: 30px; height: 30px; background: #dd3669; border-radius: 50%; }
+    .heart-shape::before { left: -15px; } .heart-shape::after { top: -15px; }
+    .floating-heart { position: absolute; font-size: 24px; pointer-events: none; z-index: 100; animation: burst 1.5s ease-out forwards; }
+    @keyframes burst { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(1.5); opacity: 0; } }
+  </style>
+</head>
+<body>
+
+  <div class="page" id="page1">
+    <div class="heart-bg"></div>
+    <div class="header-container">
+      <h1>MESSAGE FOR YOU, ULEINAH !!</h1>
+      <p>IF YOU FEEL MAD, READ IT</p>
+    </div>
+
+    <div class="interactive-area">
+      <div class="container">
+        <div class="flap" id="flap"></div>
+        <div class="envelope-front"></div>
+        <div class="card" id="card">
+            <strong id="typewriter-title">Dear Uleinah,</strong><br>
+            <span id="typewriter-text"></span>
+        </div>
+        <div class="heart-button" id="heartBtn"><div class="heart-shape"></div></div>
+        <div class="envelope-back"></div>
+      </div>
+      
+      <div class="button-group">
+        <button class="toggle-button" id="toggleBtn">OPEN / CLOSE</button>
+        <button class="bottom-button" id="goToVideos">WATCH VIDEO</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page2">
+    <div class="gallery-header">
+      <button class="back-btn" id="goBack">← Back</button>
+      <h2>Our Moments ✨</h2>
+    </div>
+
+    <div class="video-grid">
+      <div class="video-card">
+        <video controls><source src="1.mp4" type="video/mp4"></video>
+        <div class="video-info">VIDEO 1</div>
+      </div>
+      <div class="video-card">
+        <video controls><source src="2.mp4" type="video/mp4"></video>
+        <div class="video-info">VIDEO 2</div>
+      </div>
+      <div class="video-card">
+        <video controls><source src="3.mp4" type="video/mp4"></video>
+        <div class="video-info">VIDEO 3</div>
+      </div>
+      <div class="video-card">
+        <video controls><source src="4.mp4" type="video/mp4"></video>
+        <div class="video-info">VIDEO 4</div>
+      </div>
+      <div class="video-card">
+        <video controls><source src="5.mp4" type="video/mp4"></video>
+        <div class="video-info">VIDEO 5</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Variables to find elements in the HTML
+  const page1 = document.getElementById('page1');
+  const page2 = document.getElementById('page2');
+  const goToVideos = document.getElementById('goToVideos');
+  const goBack = document.getElementById('goBack');
+  const heartBtn = document.getElementById('heartBtn');
+  const toggleBtn = document.getElementById('toggleBtn');
+  const flap = document.getElementById('flap');
+  const card = document.getElementById('card');
+  const textContainer = document.getElementById('typewriter-text');
+
+  // The Message Content
+  const fullMessage = "Hi, I know that right now, you may be feeling really upset or frustrated about something, but I just want to assure you that your feelings are perfectly normal and justified. Yes, it’s perfectly normal to feel angry sometimes. But what’s more important to remember right now is that you are not alone in how you feel. There’s someone out there who cares and is willing to listen to you. 💬 So if there’s something that’s been bothering you lately, do not worry because there’s no need to keep it all bottled up inside. Talking about how you feel and what’s been stressing you out may somehow lighten up the weight on your shoulders a little more. You deserve to be heard and understood, not judged. Your emotions are perfectly normal reactions to how you feel about the situation that’s going on in your life right now. Your emotions do not make you weak; they make you more human. 🤍 These feelings that you have right now will not stay with you forever, no matter how much they weigh on your heart right now. You see, taking a deep breath and stepping back a little from the situation or just taking time to cool off will somehow give you a clearer point of view on how to look at things. There’s no need to hurry yourself in healing because healing takes time, and that’s perfectly normal too. 🌿 What’s more important to remember right now is that you are important, and your feelings matter. Take care of yourself because whatever it is that’s going on right now, remember that you are strong enough to get through it one step at a time.";
+  
+  let isOpen = false;
+  let charIndex = 0; 
+  let typingTimer = null;
+  const speed = 90; // Adjust typing speed here
+
+  // --- TYPING LOGIC ---
+  function startTyping() {
+    if (typingTimer) return; 
+    typingTimer = setInterval(() => {
+      if (charIndex < fullMessage.length) {
+        textContainer.innerHTML += fullMessage.charAt(charIndex);
+        charIndex++;
+        card.scrollTop = card.scrollHeight;
+      } else { stopTyping(); }
+    }, speed);
+  }
+
+  function stopTyping() {
+    clearInterval(typingTimer);
+    typingTimer = null;
+  }
+
+  // --- ENVELOPE LOGIC ---
+  function openEnvelope() {
+    flap.classList.add('open');
+    heartBtn.style.opacity = '0';
+    heartBtn.style.pointerEvents = 'none';
+    setTimeout(() => {
+      card.classList.add('revealed');
+      setTimeout(startTyping, 1000); 
+    }, 600);
+    isOpen = true;
+  }
+
+  function closeEnvelope() {
+    stopTyping();
+    card.classList.remove('revealed');
+    setTimeout(() => {
+      flap.classList.remove('open');
+      heartBtn.style.opacity = '1';
+      heartBtn.style.pointerEvents = 'auto';
+    }, 600);
+    isOpen = false;
+  }
+
+  // --- HEART BURST ANIMATION ---
+  function createHearts() {
+    for (let i = 0; i < 12; i++) {
+      setTimeout(() => {
+        const h = document.createElement('div');
+        h.className = 'floating-heart'; h.innerHTML = '💗 ✨❤️💕💝 '    ;   h.style.left = '50%'; h.style.top = '50%';
+        const tx = (Math.random() - 0.5) * 400 + 'px';
+        const ty = (Math.random() * -400 - 50) + 'px'; 
+        const tr = (Math.random() * 720 - 360) + 'deg';
+        h.style.setProperty('--tx', tx); h.style.setProperty('--ty', ty); h.style.setProperty('--tr', tr);
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 1500);
+      }, i * 60); 
+    }
+  }
+
+  // --- BUTTON EVENT LISTENERS ---
+  heartBtn.addEventListener('click', () => { openEnvelope(); createHearts(); });
+  toggleBtn.addEventListener('click', () => { isOpen ? closeEnvelope() : (openEnvelope(), createHearts()); });
+
+  goToVideos.addEventListener('click', () => {
+    stopTyping();
+    page1.classList.add('hidden');
+    page2.classList.add('active');
+  });
+
+  goBack.addEventListener('click', () => {
+    page1.classList.remove('hidden');
+    page2.classList.remove('active');
+    const videos = document.querySelectorAll('video');
+    videos.forEach(v => v.pause()); // Pauses videos when leaving gallery
+    if (isOpen) setTimeout(startTyping, 800); 
+  });
+</script>
+
+</body>
+</html>
